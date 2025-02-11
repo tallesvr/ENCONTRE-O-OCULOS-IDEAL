@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encontre o Óculos Ideal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Descubra o Óculos Perfeito para Você!</h2>
+
+    <div id="step1">
+        <label>Você dirige com frequência?</label><br>
+        <button onclick="showNext('step2')">Sim, inclusive à noite</button>
+        <button onclick="skipTo('step3')">Sim, mas raramente à noite</button>
+        <button onclick="skipTo('step3')">Não dirijo</button>
+    </div>
+
+    <div id="step2" class="hidden">
+        <label>Gostaria de adicionar Antirreflexo?</label><br>
+        <button onclick="showNext('step3')">Sim, Premium</button>
+        <button onclick="showNext('step3')">Sim, Simples</button>
+        <button onclick="showNext('step3')">Não</button>
+    </div>
+
+    <div id="step3" class="hidden">
+        <label>Você trabalha em escritório ou usa computador com frequência?</label><br>
+        <button onclick="showNext('step4')">Sim</button>
+        <button onclick="showNext('step4')">Não</button>
+    </div>
+
+    <div id="step4" class="hidden">
+        <label>Gostaria de tirar uma foto para análise facial?</label><br>
+        <button onclick="enableCamera()">Sim</button>
+        <button onclick="endQuiz()">Não</button>
+    </div>
+
+    <div id="cameraContainer" class="hidden">
+        <video id="camera" width="300" height="200" autoplay></video><br>
+        <button onclick="capturePhoto()">Capturar Foto</button>
+    </div>
+
+    <div id="result" class="hidden">
+        <h3>Parabéns! Sua recomendação está pronta.</h3>
+        <p>Você receberá as melhores opções baseadas no seu estilo e preferências.</p>
+    </div>
+</div>
+
+<script>
+    function showNext(stepId) {
+        document.getElementById(stepId).classList.remove('hidden');
+    }
+
+    function skipTo(stepId) {
+        document.getElementById('step2').classList.add('hidden'); // Esconde a pergunta anterior se pular
+        document.getElementById(stepId).classList.remove('hidden');
+    }
+
+    function enableCamera() {
+        document.getElementById('cameraContainer').classList.remove('hidden');
+        let video = document.getElementById('camera');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.log("Erro ao acessar a câmera: ", err);
+            });
+    }
+
+    function capturePhoto() {
+        let video = document.getElementById('camera');
+        let canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        let ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        video.srcObject.getTracks().forEach(track => track.stop()); // Desliga a câmera
+
+        document.getElementById('cameraContainer').classList.add('hidden');
+        document.getElementById('result').classList.remove('hidden');
+    }
+
+    function endQuiz() {
+        document.getElementById('step4').classList.add('hidden');
+        document.getElementById('result').classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>
